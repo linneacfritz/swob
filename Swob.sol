@@ -13,6 +13,7 @@ address public winner;
 uint public nodeId;
 Match originalMatch;
 Match bestMatch;
+uint[2] tuple;
 
 
 
@@ -44,9 +45,9 @@ function foundMatch (uint sw, uint hw, uint ts){
   }
 }
 
-function sameMatch returns bool {
+function sameMatch () returns (bool) {
   if (bestMatch.software == originalMatch.software &&
-  bestMatch.hardware == originalMatch.hardare){
+  bestMatch.hardware == originalMatch.hardware){
     return true;
   }
   else return false;
@@ -58,6 +59,12 @@ winner=leader;
 //return the address of the winner, and perhaps get the new information to the
 //database through another medium than the blockchain.
 //caller.send(bestMatch);
-caller.send(winner);
 }
+
+function getBestMatch () returns (uint[2]){
+  tuple[0]=bestMatch.hardware;
+  tuple[1]=bestMatch.software;
+  return tuple;
+}
+
 }
