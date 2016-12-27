@@ -1,0 +1,27 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Software on the blockchain</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href="./app.css" rel='stylesheet' type='text/css'>
+  <script src="./app.js"></script>
+</head>
+<body>
+  <h1>Welcome to SWOB!</h1>
+  <h3>Car node's ID: <span class="black"><span id="node"></span></span></h3>
+  <h3>Account balance: <span class="black"><span id="balance"></span></span></h3>
+
+  <br>
+  <h1>Send</h1>
+  <br><label for="nodeId">Car node's ID: </label><input type="text" id="nodeId" placeholder="e.g., 0123456789"></input>
+  <br><label for="software">Software: </label><input type="text" id="software" placeholder="e.g., 0123456789"></input>
+  <br><label for="hardware">Hardware: </label><input type="text" id="hardware" placeholder="e.g., 0123456789"></input>
+  <br><label for="timestamp">Timestamp: </label><input type="text" id="timestamp" placeholder="e.g., 0123456789"></input>
+  <br><label for="receiver">To Address: </label><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae"></input>
+  <br><br><button id="send" onclick="sendCall()">Ask the blockchain!</button>
+  <br><br>
+  <span id="status"></span>
+</body>
+</html>
