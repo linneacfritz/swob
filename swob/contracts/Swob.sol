@@ -23,12 +23,12 @@ Match originalMatch;
 uint[2] tuple;
 
 function Swob(){
-//  balances[msg.sender] = 10000;
-
-//nodeId= 70;
-  //balances[0xbd936510b0b7ec16ec5c13b7c9af316de5986c97]= 500;
-
 }
+
+function startCall(uint n){
+  setNodeId(n);
+}
+
 
 modifier onlyCaller(){
 if (msg.sender != caller) throw;
@@ -46,26 +46,9 @@ matches[0] = Match(n, s, h, t);
     uint myId=this.nodeId();
     createMatch(n, s, h, t);
 
-    //bestMatch.software = s;
-
-//uint myS = this.bestMatch.software();
-//    bestMatch.hardware = h;
-//    bestMatch.timestamp = t;
-
-  //  originalMatch.software = s;
-  //  originalMatch.hardware = h;
-  //  originalMatch.timestamp = t;
-
-
-    //  return nodeId+1;
-
 }
 
-//function getBalance(address a) returns (uint){
-//return balances[a];
-//}
-
-function setNodeId(uint n){
+function setNodeId(uint n) {
  Swob.nodeId = n;
 }
 
