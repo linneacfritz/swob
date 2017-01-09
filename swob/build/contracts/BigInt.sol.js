@@ -231,13 +231,13 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("Swob error: Please call setProvider() first before calling new().");
+      throw new Error("BigInt error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("Swob error: contract binary not set. Can't deploy new instance.");
+      throw new Error("BigInt error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -256,7 +256,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("Swob contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Swob: " + unlinked_libraries);
+      throw new Error("BigInt contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BigInt: " + unlinked_libraries);
     }
 
     var self = this;
@@ -297,7 +297,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to Swob.at(): " + address);
+      throw new Error("Invalid address passed to BigInt.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -308,7 +308,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: Swob not deployed or address not set.");
+      throw new Error("Cannot find deployed address: BigInt not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -351,12 +351,25 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     "abi": [
       {
         "constant": false,
-        "inputs": [],
-        "name": "getBestHardware",
+        "inputs": [
+          {
+            "name": "b",
+            "type": "bytes"
+          },
+          {
+            "name": "e",
+            "type": "uint256"
+          },
+          {
+            "name": "m",
+            "type": "bytes"
+          }
+        ],
+        "name": "modexp_naive",
         "outputs": [
           {
-            "name": "",
-            "type": "uint256"
+            "name": "r",
+            "type": "bytes"
           }
         ],
         "payable": false,
@@ -366,44 +379,23 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "h",
+            "name": "b",
+            "type": "bytes"
+          },
+          {
+            "name": "e",
             "type": "uint256"
           },
           {
-            "name": "s",
-            "type": "uint256"
-          },
-          {
-            "name": "t",
-            "type": "uint256"
+            "name": "m",
+            "type": "bytes"
           }
         ],
-        "name": "createMatch",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "nodeId",
+        "name": "modexp",
         "outputs": [
           {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "getBestSoftware",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
+            "name": "r",
+            "type": "bytes"
           }
         ],
         "payable": false,
@@ -413,260 +405,33 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "n",
-            "type": "uint256"
-          }
-        ],
-        "name": "startCall",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "number_of_checks",
-        "outputs": [
+            "name": "b",
+            "type": "uint256[]"
+          },
           {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "endCall",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "i",
-            "type": "uint256"
-          }
-        ],
-        "name": "getSoftware",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "leader",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "h",
+            "name": "e",
             "type": "uint256"
           },
           {
-            "name": "s",
-            "type": "uint256"
-          },
-          {
-            "name": "t",
-            "type": "uint256"
-          },
-          {
-            "name": "a",
-            "type": "address"
+            "name": "m",
+            "type": "uint256[]"
           }
         ],
-        "name": "setBestMatch",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "i",
-            "type": "uint256"
-          }
-        ],
-        "name": "getHardware",
+        "name": "modexp",
         "outputs": [
           {
-            "name": "",
-            "type": "uint256"
+            "name": "r",
+            "type": "uint256[]"
           }
         ],
         "payable": false,
         "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "getBestMatch",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "i",
-            "type": "uint256"
-          }
-        ],
-        "name": "getLeader",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "name": "i",
-            "type": "uint256"
-          }
-        ],
-        "name": "getSender",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "winner",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "getNumberOfChecks",
-        "outputs": [
-          {
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "caller",
-        "outputs": [
-          {
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "payable": false,
-        "type": "constructor"
       }
     ],
-    "unlinked_binary": "0x606060405234610000575b5b5b6107688061001b6000396000f300606060405236156100d55763ffffffff60e060020a60003504166301e9512581146100da578063099a3548146100f9578063139d7fed1461011157806327ca2ae71461013057806329245dd11461014f5780632e0fb6fc1461016157806338e45c65146101805780633ed2fa801461018f57806340eedabb146101b157806379d10ce8146101da5780639a20e3a8146101fe5780639c09bb4e14610220578063a837cc6314610261578063b971302a1461028d578063dfbf53ae146102b9578063f9b83323146102e2578063fc9c8d3914610301575b610000565b34610000576100e761032a565b60408051918252519081900360200190f35b346100005761010f600435602435604435610331565b005b34610000576100e7610576565b60408051918252519081900360200190f35b34610000576100e761057c565b60408051918252519081900360200190f35b346100005761010f600435610583565b005b34610000576100e761059d565b60408051918252519081900360200190f35b346100005761010f6105a3565b005b34610000576100e76004356105e4565b60408051918252519081900360200190f35b34610000576101be610610565b60408051600160a060020a039092168252519081900360200190f35b346100005761010f600435602435604435600160a060020a036064351661061f565b005b34610000576100e7600435610684565b60408051918252519081900360200190f35b346100005761022d6106b0565b604080519586526020860194909452848401929092526060840152600160a060020a03166080830152519081900360a00190f35b34610000576101be6004356106d0565b60408051600160a060020a039092168252519081900360200190f35b34610000576101be6004356106e2565b60408051600160a060020a039092168252519081900360200190f35b34610000576101be610717565b60408051600160a060020a039092168252519081900360200190f35b34610000576100e7610726565b60408051918252519081900360200190f35b34610000576101be61072d565b60408051600160a060020a039092168252519081900360200190f35b600c545b90565b60a060405190810160405280600081526020016000815260200160008152602001600081526020016000600160a060020a03168152506004600054111561037757610000565b5060018054600160a060020a03191633600160a060020a031690811782556040805160a081018252600454815260208101879052908101859052606081018490526080810191909152600580549283018082559192909182818380158290116104335760050281600502836000526020600020918201910161043391905b8082111561042f57600080825560018201819055600282018190556003820155600481018054600160a060020a03191690556005016103f5565b5090565b5b505050916000526020600020906005020160005b5082518155602083015160018201556040830151600282015560608301516003820155608083015160049091018054600160a060020a031916600160a060020a0390921691909117905550600e546000546005805490919081101561000057906000526020600020906005020160005b50600301541115610564576105646005600054815481101561000057906000526020600020906005020160005b50600101546005600054815481101561000057906000526020600020906005020160005b50600201546005600054815481101561000057906000526020600020906005020160005b50600301546005600054815481101561000057906000526020600020906005020160005b5060040154600160a060020a031661061f565b5b6000805460010190555b5b50505050565b60045481565b600d545b90565b600481905560008080556105999080808061061f565b5b50565b60005481565b60015433600160a060020a039081169116146105be57610000565b60025460038054600160a060020a031916600160a060020a039092169190911790555b5b565b6000600582815481101561000057906000526020600020906005020160005b506002015490505b919050565b600254600160a060020a031681565b6040805160a0810182526004548082526020820187905291810185905260608101849052600160a060020a0383166080909101819052600b91909155600c859055600d849055600e839055600f8054600160a060020a03191690911790555b50505050565b6000600582815481101561000057906000526020600020906005020160005b506001015490505b919050565b600b54600c54600d54600e54600f54600160a060020a03165b9091929394565b600f54600160a060020a03165b919050565b6000600582815481101561000057906000526020600020906005020160005b5060040154600160a060020a031690505b919050565b600354600160a060020a031681565b6000545b90565b600154600160a060020a0316815600a165627a7a72305820397371ced70241e02b9993e0ef7d0472e64749ea69171f55343dce53d58582dc0029",
-    "events": {
-      "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef": {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_from",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "name": "_to",
-            "type": "address"
-          },
-          {
-            "indexed": false,
-            "name": "_value",
-            "type": "uint256"
-          }
-        ],
-        "name": "Transfer",
-        "type": "event"
-      },
-      "0x6d19c92af7a3b3719a9fc8051b64bcd660e9427f09cdaac52c8aa0539cb97e7d": {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": true,
-            "name": "_from",
-            "type": "address"
-          }
-        ],
-        "name": "Node",
-        "type": "event"
-      }
-    },
-    "updated_at": 1483953450775,
-    "links": {},
-    "address": "0xb111cc6763e98c8487107f47969a6c1d87b095f1"
+    "unlinked_binary": "0x606060405234610000575b610675806100196000396000f300606060405263ffffffff60e060020a600035041663595539cd811461003a5780638c3e1ff11461014a578063b700967b1461025a575b610000565b6100ca600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284375050604080516020601f818a01358b0180359182018390048302840183018552818452989a8a359a90999401975091955091820193509150819084018382808284375094965061033e95505050505050565b604080516020808252835181830152835191928392908301918501908083838215610110575b80518252602083111561011057601f1990920191602091820191016100f0565b505050905090810190601f16801561013c5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6100ca600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284375050604080516020601f818a01358b0180359182018390048302840183018552818452989a8a359a9099940197509195509182019350915081908401838280828437509496506103f595505050505050565b604080516020808252835181830152835191928392908301918501908083838215610110575b80518252602083111561011057601f1990920191602091820191016100f0565b505050905090810190601f16801561013c5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6102e360048080359060200190820180359060200190808060200260200160405190810160405280939291908181526020018383602002808284375050604080516020808901358a01803580830284810184018652818552999b8b359b909a95019850929650810194509092508291908501908490808284375094965061043195505050505050565b604080516020808252835181830152835191928392908301918581019102808383821561032b575b80518252602083111561032b57601f19909201916020918201910161030b565b5050509050019250505060405180910390f35b6040805160208101825260008152905160019080591061035b5750595b908082528060200260200182016040525b509050600160f860020a028160008151811015610000579060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053505b82156103ed5782600116600114156103d4576103d1818584610449565b90505b6002830492506103e5848584610449565b93505b6103b4565b5b9392505050565b60408051602081019091526000815261042761042261041386610475565b8561041d86610475565b610431565b610579565b90505b9392505050565b604080516020810190915260009052805b9392505050565b604080516020810190915260008152610427610465858561061d565b8361061d565b90505b9392505050565b604080516020810190915260008082528251601080820492918291829106819011156104a2576001909301925b836040518059106104b05750595b908082528060200260200182016040525b5094508315156104d05761056f565b602086015192506fffffffffffffffffffffffffffffffff19831692506fffffffffffffffffffffffffffffffff8304925082856000815181101561000057906020019060200201818152505060209150600190505b8381101561056f578186015192506fffffffffffffffffffffffffffffffff8316925082858281518110156100005760209081029091010152601091909101905b600101610526565b5b50505050919050565b60206040519081016040528060008152506000600083516010026040518059106105a05750595b908082528060200260200182016040525b5092508351600014156105c357610615565b600091505b83518210156106155783828151811015610000579060200190602002015190507001000000000000000000000000000000008102905080826010026020018401525b6001909101906105c8565b5b5050919050565b6040805160208101909152600081525b92915050565b6040805160208101909152600081525b929150505600a165627a7a7230582026361c185aab12390b82bd2c0d4dd3d8cc7b997f87a8ee2273137a72baca68130029",
+    "events": {},
+    "updated_at": 1483953450765,
+    "links": {}
   }
 };
 
@@ -751,7 +516,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "Swob";
+  Contract.contract_name   = Contract.prototype.contract_name   = "BigInt";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
 
   // Allow people to opt-in to breaking changes now.
@@ -791,6 +556,6 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.Swob = Contract;
+    window.BigInt = Contract;
   }
 })();

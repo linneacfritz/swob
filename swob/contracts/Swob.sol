@@ -1,33 +1,42 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.7;
+import "BigInt.sol";
 
 contract Swob {
 
-mapping (uint => Match) matches ;
+//mapping (uint => Match) matches ;
 
 struct Match {
 uint node;
 uint hardware;
 uint software;
 uint timestamp;
+address sender;
 }
 
+uint public number_of_checks;
 address public caller;
 address public leader;
 address public winner;
 uint public nodeId;
-Match bestMatch;
-Match originalMatch;
+Match[] allMatches;
+Match current;
+Match bestie;
+//address public current_sender;
 
 
 
 uint[2] tuple;
 
 function Swob(){
-//  balances[msg.sender] = 10000;
 
-//nodeId= 70;
-  //balances[0xbd936510b0b7ec16ec5c13b7c9af316de5986c97]= 500;
 
+}
+
+function startCall(uint n){
+nodeId=n;
+number_of_checks=0;
+//current_sender=msg.sender;
+setBestMatch(0,0,0,0);
 }
 
 modifier onlyCaller(){
@@ -35,75 +44,58 @@ if (msg.sender != caller) throw;
 _;
 }
 
-function createMatch(uint n, uint s, uint h, uint t){
-matches[0] = Match(n, s, h, t);
+modifier onlyFive(){
+if(number_of_checks>4) throw;
+_;
 }
 
-  function sendCall (uint n, uint s, uint h, uint t) {
-    caller = msg.sender;
-
-    nodeId =n;
-    uint myId=this.nodeId();
-    createMatch(n, s, h, t);
-
-    //bestMatch.software = s;
-
-//uint myS = this.bestMatch.software();
-//    bestMatch.hardware = h;
-//    bestMatch.timestamp = t;
-
-  //  originalMatch.software = s;
-  //  originalMatch.hardware = h;
-  //  originalMatch.timestamp = t;
-
-
-    //  return nodeId+1;
-
+function setBestMatch(uint h, uint s, uint t, address a){
+bestie = Match(nodeId, h, s, t, a);
 }
 
-//function getBalance(address a) returns (uint){
-//return balances[a];
-//}
-
-function setNodeId(uint n){
- Swob.nodeId = n;
-}
-
-function getNodeId() constant returns (uint){
-  return nodeId;
-}
-
-function foundMatch (uint sw, uint hw, uint ts){
-  if (sw != bestMatch.software || hw != bestMatch.hardware){
-    if (ts > bestMatch.timestamp){
-    bestMatch.software= sw;
-    bestMatch.hardware = hw;
-    bestMatch.timestamp = ts;
-    leader = msg.sender;
+  function createMatch (uint h, uint s, uint t) onlyFive{
+caller=msg.sender;
+    Match memory aMatch = Match(nodeId, h, s, t, msg.sender);
+    allMatches.push(aMatch);
+if(allMatches[number_of_checks].timestamp>bestie.timestamp){
+      setBestMatch(allMatches[number_of_checks].hardware, allMatches[number_of_checks].software, allMatches[number_of_checks].timestamp, allMatches[number_of_checks].sender);
     }
+    number_of_checks++;
   }
+
+
+function getNumberOfChecks() returns (uint){
+return Swob.number_of_checks;
 }
 
-function sameMatch () returns (bool) {
-  if (bestMatch.software == originalMatch.software &&
-  bestMatch.hardware == originalMatch.hardware){
-    return true;
-  }
-  else return false;
+function getBestHardware() returns (uint){
+return bestie.hardware;
+}
+
+function getBestSoftware() returns (uint){
+return bestie.software;
+}
+function getSoftware(uint i) returns (uint){
+return allMatches[i].software;
+}
+function getHardware(uint i) returns (uint){
+return allMatches[i].hardware;
+}
+
+function getLeader(uint i) returns (address){
+return bestie.sender;
+}
+
+function getSender(uint i) returns (address){
+return allMatches[i].sender;
+}
+
+function getBestMatch() returns (uint, uint, uint, uint, address){
+return (bestie.node, bestie.hardware, bestie.software, bestie.timestamp, bestie.sender);
 }
 
 function endCall() onlyCaller {
 winner=leader;
-//Because a contract cannot return a struct to an outside call, it can maybe
-//return the address of the winner, and perhaps get the new information to the
-//database through another medium than the blockchain.
-//caller.send(bestMatch);
-}
-
-function getBestMatch () returns (uint[2]){
-  tuple[0]=bestMatch.hardware;
-  tuple[1]=bestMatch.software;
-  return tuple;
 }
 
 }
