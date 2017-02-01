@@ -1,109 +1,109 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.7;
+import "BigInt.sol";
 
 contract Swob {
 
-mapping (uint => Match) matches ;
+  struct Match {
+    uint node;
+    uint hardware;
+    uint software;
+    uint timestamp;
+    address sender;
+  }
 
-struct Match {
-uint node;
-uint hardware;
-uint software;
-uint timestamp;
-}
-
-address public caller;
-address public leader;
-address public winner;
-uint public nodeId;
-Match bestMatch;
-Match originalMatch;
-
-
-
-uint[2] tuple;
-
-function Swob(){
-//  balances[msg.sender] = 10000;
-
-//nodeId= 70;
-  //balances[0xbd936510b0b7ec16ec5c13b7c9af316de5986c97]= 500;
-
-}
-
-modifier onlyCaller(){
-if (msg.sender != caller) throw;
-_;
-}
-
-function createMatch(uint n, uint s, uint h, uint t){
-matches[0] = Match(n, s, h, t);
-}
-
-  function sendCall (uint n, uint s, uint h, uint t) {
-    caller = msg.sender;
-
-    nodeId =n;
-    uint myId=this.nodeId();
-    createMatch(n, s, h, t);
-
-    //bestMatch.software = s;
-
-//uint myS = this.bestMatch.software();
-//    bestMatch.hardware = h;
-//    bestMatch.timestamp = t;
-
-  //  originalMatch.software = s;
-  //  originalMatch.hardware = h;
-  //  originalMatch.timestamp = t;
+  uint public number_of_checks;
+  address public caller;
+  address public leader;
+  address public winner;
+  uint public nodeId;
+  Match[] allMatches;
+  Match current;
+  Match bestie;
+  address quarantine;
+  string result = "hej";
 
 
-    //  return nodeId+1;
+  function Swob(){
+  }
 
-}
+  function startCall(uint n){
+    nodeId=n;
+    number_of_checks=0;
+    setBestMatch(0,0,0,0);
+  }
 
-//function getBalance(address a) returns (uint){
-//return balances[a];
-//}
+  modifier onlyCaller(){
+    if (msg.sender != caller) throw;
+    _;
+  }
 
-function setNodeId(uint n){
- Swob.nodeId = n;
-}
+  modifier onlyFive(){
+    if(number_of_checks>4) throw;
+    _;
+  }
 
-function getNodeId() constant returns (uint){
-  return nodeId;
-}
+  function findBestMatch(){
+    if (allMatches[0].software == allMatches[1].software){
+      setBestMatch(allMatches[0].hardware, allMatches[0].software, allMatches[0].timestamp, allMatches[0].sender);
+    }
+    else{
+      if (allMatches[2].software == allMatches[1].software){
+        setBestMatch(allMatches[1].hardware, allMatches[1].software, allMatches[1].timestamp, allMatches[1].sender);
+      }
+      if (allMatches[2].software == allMatches[0].software)
+        setBestMatch(allMatches[0].hardware, allMatches[0].software, allMatches[0].timestamp, allMatches[0].sender);
 
-function foundMatch (uint sw, uint hw, uint ts){
-  if (sw != bestMatch.software || hw != bestMatch.hardware){
-    if (ts > bestMatch.timestamp){
-    bestMatch.software= sw;
-    bestMatch.hardware = hw;
-    bestMatch.timestamp = ts;
-    leader = msg.sender;
+      else result = "No concisive answer. Please make call again.";
     }
   }
-}
 
-function sameMatch () returns (bool) {
-  if (bestMatch.software == originalMatch.software &&
-  bestMatch.hardware == originalMatch.hardware){
-    return true;
+  function setBestMatch(uint h, uint s, uint t, address a){
+    bestie = Match(nodeId, h, s, t, a);
   }
-  else return false;
-}
 
-function endCall() onlyCaller {
-winner=leader;
-//Because a contract cannot return a struct to an outside call, it can maybe
-//return the address of the winner, and perhaps get the new information to the
-//database through another medium than the blockchain.
-//caller.send(bestMatch);
-}
+  function createMatch (uint h, uint s, uint t) onlyFive{
+    caller=msg.sender;
+    Match memory aMatch = Match(nodeId, h, s, t, msg.sender);
+    allMatches.push(aMatch);
+    //if(allMatches[number_of_checks].timestamp>bestie.timestamp){
+      //setBestMatch(allMatches[number_of_checks].hardware, allMatches[number_of_checks].software, allMatches[number_of_checks].timestamp, allMatches[number_of_checks].sender);
+    //}
+    number_of_checks++;
+  }
 
-function getBestMatch () returns (uint[2]){
-  tuple[0]=bestMatch.hardware;
-  tuple[1]=bestMatch.software;
-  return tuple;
-}
+  function bubbleSortAllMatches(){
+    for(uint i = 0; i<4; i++){
+      if (allMatches[i].software>allMatches[i+1].software){
+        swap(i, i+1);
+      }
+    }
+  }
+
+  function swap (uint first, uint second){
+    Match memory temp = Match(allMatches[first].node, allMatches[first].hardware, allMatches[first].software, allMatches[first].timestamp, allMatches[first].sender);
+    allMatches[first] = Match(allMatches[second].node, allMatches[second].hardware, allMatches[second].software, allMatches[second].timestamp, allMatches[second].sender);
+    allMatches[second]=temp;
+  }
+
+
+  function getNumberOfChecks() returns (uint){
+    return Swob.number_of_checks;
+  }
+
+ function getMatchFromList (uint i) returns (uint, uint, uint, uint, address){
+    return (allMatches[i].node, allMatches[i].hardware, allMatches[i].software, allMatches[i].timestamp, allMatches[i].sender);
+  }
+
+  function getBestMatch() returns (uint, uint, uint, uint, address){
+    return (bestie.node, bestie.hardware, bestie.software, bestie.timestamp, bestie.sender);
+  }
+
+  function getResult() returns (string){
+    return result;
+  }
+
+  function endCall() onlyCaller {
+    winner=leader;
+  }
 
 }

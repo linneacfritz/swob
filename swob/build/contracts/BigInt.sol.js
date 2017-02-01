@@ -231,13 +231,13 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.new = function() {
     if (this.currentProvider == null) {
-      throw new Error("Migrations error: Please call setProvider() first before calling new().");
+      throw new Error("BigInt error: Please call setProvider() first before calling new().");
     }
 
     var args = Array.prototype.slice.call(arguments);
 
     if (!this.unlinked_binary) {
-      throw new Error("Migrations error: contract binary not set. Can't deploy new instance.");
+      throw new Error("BigInt error: contract binary not set. Can't deploy new instance.");
     }
 
     var regex = /__[^_]+_+/g;
@@ -256,7 +256,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         return name != arr[index + 1];
       }).join(", ");
 
-      throw new Error("Migrations contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of Migrations: " + unlinked_libraries);
+      throw new Error("BigInt contains unresolved libraries. You must deploy and link the following libraries before you can deploy a new version of BigInt: " + unlinked_libraries);
     }
 
     var self = this;
@@ -297,7 +297,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.at = function(address) {
     if (address == null || typeof address != "string" || address.length != 42) {
-      throw new Error("Invalid address passed to Migrations.at(): " + address);
+      throw new Error("Invalid address passed to BigInt.at(): " + address);
     }
 
     var contract_class = this.web3.eth.contract(this.abi);
@@ -308,7 +308,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
 
   Contract.deployed = function() {
     if (!this.address) {
-      throw new Error("Cannot find deployed address: Migrations not deployed or address not set.");
+      throw new Error("Cannot find deployed address: BigInt not deployed or address not set.");
     }
 
     return this.at(this.address);
@@ -353,36 +353,23 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "new_address",
-            "type": "address"
-          }
-        ],
-        "name": "upgrade",
-        "outputs": [],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "last_completed_migration",
-        "outputs": [
+            "name": "b",
+            "type": "bytes"
+          },
           {
-            "name": "",
+            "name": "e",
             "type": "uint256"
+          },
+          {
+            "name": "m",
+            "type": "bytes"
           }
         ],
-        "payable": false,
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [],
-        "name": "owner",
+        "name": "modexp_naive",
         "outputs": [
           {
-            "name": "",
-            "type": "address"
+            "name": "r",
+            "type": "bytes"
           }
         ],
         "payable": false,
@@ -392,25 +379,58 @@ var SolidityEvent = require("web3/lib/web3/event.js");
         "constant": false,
         "inputs": [
           {
-            "name": "completed",
+            "name": "b",
+            "type": "bytes"
+          },
+          {
+            "name": "e",
             "type": "uint256"
+          },
+          {
+            "name": "m",
+            "type": "bytes"
           }
         ],
-        "name": "setCompleted",
-        "outputs": [],
+        "name": "modexp",
+        "outputs": [
+          {
+            "name": "r",
+            "type": "bytes"
+          }
+        ],
         "payable": false,
         "type": "function"
       },
       {
-        "inputs": [],
+        "constant": false,
+        "inputs": [
+          {
+            "name": "b",
+            "type": "uint256[]"
+          },
+          {
+            "name": "e",
+            "type": "uint256"
+          },
+          {
+            "name": "m",
+            "type": "uint256[]"
+          }
+        ],
+        "name": "modexp",
+        "outputs": [
+          {
+            "name": "r",
+            "type": "uint256[]"
+          }
+        ],
         "payable": false,
-        "type": "constructor"
+        "type": "function"
       }
     ],
-    "unlinked_binary": "0x606060405234610000575b60008054600160a060020a03191633600160a060020a03161790555b5b610190806100366000396000f300606060405263ffffffff60e060020a6000350416630900f0108114610045578063445df0ac146100605780638da5cb5b1461007f578063fdacd576146100a8575b610000565b346100005761005e600160a060020a03600435166100ba565b005b346100005761006d61012d565b60408051918252519081900360200190f35b346100005761008c610133565b60408051600160a060020a039092168252519081900360200190f35b346100005761005e600435610142565b005b6000805433600160a060020a03908116911614156101275781905080600160a060020a031663fdacd5766001546040518263ffffffff1660e060020a02815260040180828152602001915050600060405180830381600087803b156100005760325a03f115610000575050505b5b5b5050565b60015481565b600054600160a060020a031681565b60005433600160a060020a039081169116141561015f5760018190555b5b5b505600a165627a7a72305820155829e70cd98fdd9326cb388779cf917c12850be1aacf38c7a9e631e1a4c1b90029",
+    "unlinked_binary": "0x606060405234610000575b610675806100196000396000f300606060405263ffffffff60e060020a600035041663595539cd811461003a5780638c3e1ff11461014a578063b700967b1461025a575b610000565b6100ca600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284375050604080516020601f818a01358b0180359182018390048302840183018552818452989a8a359a90999401975091955091820193509150819084018382808284375094965061033e95505050505050565b604080516020808252835181830152835191928392908301918501908083838215610110575b80518252602083111561011057601f1990920191602091820191016100f0565b505050905090810190601f16801561013c5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6100ca600480803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284375050604080516020601f818a01358b0180359182018390048302840183018552818452989a8a359a9099940197509195509182019350915081908401838280828437509496506103f595505050505050565b604080516020808252835181830152835191928392908301918501908083838215610110575b80518252602083111561011057601f1990920191602091820191016100f0565b505050905090810190601f16801561013c5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6102e360048080359060200190820180359060200190808060200260200160405190810160405280939291908181526020018383602002808284375050604080516020808901358a01803580830284810184018652818552999b8b359b909a95019850929650810194509092508291908501908490808284375094965061043195505050505050565b604080516020808252835181830152835191928392908301918581019102808383821561032b575b80518252602083111561032b57601f19909201916020918201910161030b565b5050509050019250505060405180910390f35b6040805160208101825260008152905160019080591061035b5750595b908082528060200260200182016040525b509050600160f860020a028160008151811015610000579060200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053505b82156103ed5782600116600114156103d4576103d1818584610449565b90505b6002830492506103e5848584610449565b93505b6103b4565b5b9392505050565b60408051602081019091526000815261042761042261041386610475565b8561041d86610475565b610431565b610579565b90505b9392505050565b604080516020810190915260009052805b9392505050565b604080516020810190915260008152610427610465858561061d565b8361061d565b90505b9392505050565b604080516020810190915260008082528251601080820492918291829106819011156104a2576001909301925b836040518059106104b05750595b908082528060200260200182016040525b5094508315156104d05761056f565b602086015192506fffffffffffffffffffffffffffffffff19831692506fffffffffffffffffffffffffffffffff8304925082856000815181101561000057906020019060200201818152505060209150600190505b8381101561056f578186015192506fffffffffffffffffffffffffffffffff8316925082858281518110156100005760209081029091010152601091909101905b600101610526565b5b50505050919050565b60206040519081016040528060008152506000600083516010026040518059106105a05750595b908082528060200260200182016040525b5092508351600014156105c357610615565b600091505b83518210156106155783828151811015610000579060200190602002015190507001000000000000000000000000000000008102905080826010026020018401525b6001909101906105c8565b5b5050919050565b6040805160208101909152600081525b92915050565b6040805160208101909152600081525b929150505600a165627a7a723058201ea610b8729118624bcc097055045cc35a9cbccce7108b773b5b2ed82f11a5980029",
     "events": {},
-    "updated_at": 1485960654053,
-    "address": "0xb28aea52842546ac2eb40ae74cc9e58db5b3ddfc",
+    "updated_at": 1485960654056,
     "links": {}
   }
 };
@@ -496,7 +516,7 @@ var SolidityEvent = require("web3/lib/web3/event.js");
     Contract.links[name] = address;
   };
 
-  Contract.contract_name   = Contract.prototype.contract_name   = "Migrations";
+  Contract.contract_name   = Contract.prototype.contract_name   = "BigInt";
   Contract.generated_with  = Contract.prototype.generated_with  = "3.2.0";
 
   // Allow people to opt-in to breaking changes now.
@@ -536,6 +556,6 @@ var SolidityEvent = require("web3/lib/web3/event.js");
   } else {
     // There will only be one version of this contract in the browser,
     // and we can use that.
-    window.Migrations = Contract;
+    window.BigInt = Contract;
   }
 })();
